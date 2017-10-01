@@ -13,6 +13,8 @@ public class MainActivity extends Activity {
 
         Intent intent = new Intent(this, QRCaptureActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        // settings
         intent.putExtra(QRCaptureActivity.AutoFocus, true);
         intent.putExtra(QRCaptureActivity.UseFlash, false);
         startActivity(intent);

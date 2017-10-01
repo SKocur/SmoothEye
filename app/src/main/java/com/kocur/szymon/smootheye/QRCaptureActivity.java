@@ -20,7 +20,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,13 +30,11 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -48,7 +45,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.CommonStatusCodes;
 
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -58,29 +54,13 @@ import com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview;
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-/**
- * Activity for the multi-tracker app.  This app detects barcodes and displays the value with the
- * rear facing camera. During detection overlay graphics are drawn to indicate the position,
- * size, and ID of each barcode.
- */
 public final class QRCaptureActivity extends FragmentActivity {
     private static final String TAG = "Barcode-reader";
-
-    // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
-
-    // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
-
-    // constants used to pass extra data in the intent
-    public static final String AutoFocus = "AutoFocus";
-    public static final String UseFlash = "UseFlash";
-    public static final String BarcodeObject = "Barcode";
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
@@ -91,6 +71,27 @@ public final class QRCaptureActivity extends FragmentActivity {
     private GestureDetector gestureDetector;
 
     private TextToSpeech tts;
+
+    public static final String AutoFocus = "AutoFocus";
+    public static final String UseFlash = "UseFlash";
+
+    /**
+     *  Data is formatted into QR Code in format:
+     *
+     *  SEMENU-1-Place1-2-Place2-3-ThirdElement
+     *  and so on.
+     *
+     *  SEMENU has 0 index in the list
+     *  1 has 1st index
+     *  Place1 has 2nd index
+     *  ...
+     *  Place2 has 4th index
+     *  ...
+     *  ThirdElement has 6th index
+     *
+     *  All of these places can be divided by two and we use this property to extract them.
+     * */
+    public static final int CHOICE_EVEN_SEPARATOR = 2;
 
     Handler handler;
 
@@ -170,7 +171,7 @@ public final class QRCaptureActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //TODO: Just marker bro
+
         if(requestCode == 1309 && resultCode == RESULT_OK){
             speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
             choice = Integer.parseInt(data.getStringExtra("data"));
@@ -188,11 +189,6 @@ public final class QRCaptureActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * Handles the requesting of the camera permission.  This includes
-     * showing a "Snackbar" message of why the permission is needed then
-     * sending the request.
-     */
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
 
@@ -230,14 +226,6 @@ public final class QRCaptureActivity extends FragmentActivity {
         return b || c || super.onTouchEvent(e);
     }
 
-    /**
-     * Creates and starts the camera.  Note that this uses a higher resolution in comparison
-     * to other detection examples to enable the barcode detector to detect small barcodes
-     * at long distances.
-     *
-     * Suppressing InlinedApi since there is a check that the minimum version is met before using
-     * the constant.
-     */
     @SuppressLint("InlinedApi")
     private void createCameraSource(boolean autoFocus, boolean useFlash) {
         Context context = getApplicationContext();
@@ -301,18 +289,12 @@ public final class QRCaptureActivity extends FragmentActivity {
                 .build();
     }
 
-    /**
-     * Restarts the camera.
-     */
     @Override
     protected void onResume() {
         super.onResume();
         startCameraSource();
     }
 
-    /**
-     * Stops the camera.
-     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -321,10 +303,6 @@ public final class QRCaptureActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * Releases the resources associated with the camera source, the associated detectors, and the
-     * rest of the processing pipeline.
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -428,7 +406,7 @@ public final class QRCaptureActivity extends FragmentActivity {
                         final String data[] = best.rawValue.split("[-]");
                         for(int i = 1; i < data.length; i++) {
                             Log.e(">>>>>>>>>>>>>>>>>>>>", data[i]);
-                            if(i%2 != 0)
+                            if(i % CHOICE_EVEN_SEPARATOR != 0)
                                 availableChoices.put(Integer.parseInt(data[i]), data[i + 1]);
                         }
 
@@ -439,15 +417,6 @@ public final class QRCaptureActivity extends FragmentActivity {
                     }
                     break;
                 }
-            }
-
-            float dx = x - barcode.getBoundingBox().centerX();
-            float dy = y - barcode.getBoundingBox().centerY();
-            float distance = (dx * dx) + (dy * dy);  // actually squared distance
-            if (distance < bestDistance) {
-                best = barcode;
-                bestDistance = distance;
-                Log.e(">>>>>>>>>>>>>>", "size: " + barcode.getBoundingBox().height());
             }
         }
         return false;

@@ -9,9 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.google.android.gms.common.api.CommonStatusCodes;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -52,44 +49,11 @@ public class ChoiceActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        final String intentData = intent.getStringExtra("data");
-        final String data[] = intentData.split("[-]");
-
         handler = new Handler();
 
         SpeakContent speakContent = new SpeakContent();
         isBackgroundThreadRunning = true;
         speakContent.start();
-        /*for(int i = 0; i < data.length; i++){
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-
-                }
-            }, 500*i);
-        }*/
-        /*handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for(int i = 0; i < data.length; i++){
-                    final int index = i;
-                    //For indexes like 2,4,6...
-                    //From SEMENU-1-Something-2-Something...
-                    if(i != 0 && i%2 == 0) {
-                        speak(data[i]);
-                        enableOptionOnButton(data[i]);
-                        Log.e(">>>>>>>>>>>>>>>>>>", data[i]);
-                        try {
-                            Thread.sleep(data[i].length() * 450);
-                        } catch (InterruptedException e) {
-
-                        }
-                    }
-                }
-                handler.postDelayed(this, 500);
-            }
-        }, 3000); */
     }
 
     private class SpeakContent extends Thread {
@@ -103,7 +67,7 @@ public class ChoiceActivity extends AppCompatActivity {
                     if(!isBackgroundThreadRunning)
                         break;
 
-                    if(i%2 == 0) {
+                    if(i % QRCaptureActivity.CHOICE_EVEN_SEPARATOR == 0) {
                         availableOptions.put(data[i], Integer.parseInt(data[i-1]));
                         speak(data[i]);
                         enableOptionOnButton(data[i]);
