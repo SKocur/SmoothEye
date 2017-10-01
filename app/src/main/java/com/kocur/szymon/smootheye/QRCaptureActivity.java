@@ -89,7 +89,7 @@ public final class QRCaptureActivity extends FragmentActivity {
      *  ...
      *  ThirdElement has 6th index
      *
-     *  All of these places can be divided by two and we use this property to extract them.
+     *  All of these places can be divided by two and we can use this property to extract them.
      * */
     public static final int CHOICE_EVEN_SEPARATOR = 2;
 
