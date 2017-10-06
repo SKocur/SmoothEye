@@ -1,18 +1,3 @@
-/*
- * Copyright (C) The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.kocur.szymon.smootheye;
 
 import android.Manifest;
@@ -41,8 +26,11 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -91,6 +79,7 @@ public final class QRCaptureActivity extends FragmentActivity {
      *
      *  All of these places can be divided by two and we can use this property to extract them.
      * */
+
     public static final int CHOICE_EVEN_SEPARATOR = 2;
 
     Handler handler;
@@ -107,6 +96,20 @@ public final class QRCaptureActivity extends FragmentActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.barcode_capture);
+
+        ((ImageView) findViewById(R.id.image_icon_more)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_more));
+            }
+        });
+
+        ((ImageView) findViewById(R.id.image_icon_settings)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_settings));
+            }
+        });
 
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) findViewById(R.id.graphicOverlay);
@@ -390,7 +393,6 @@ public final class QRCaptureActivity extends FragmentActivity {
             if(barcode.getBoundingBox() != null) {
                 if (barcode.getBoundingBox().contains((int) x, (int) y)) {
                     // Exact hit, no need to keep looking.
-                    //TODO: Add ability to recognize the choice, thx
                     best = barcode;
                     if (isOnSEMENU && best.rawValue.contains("SELeft") && best.rawValue.contains(choice + "") && best.getBoundingBox().height() >= 400)
                         speak("Turn left");

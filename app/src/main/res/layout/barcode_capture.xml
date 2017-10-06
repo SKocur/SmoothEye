@@ -1,12 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/topLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:background="@null"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/image_icon_more"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/icon_more"
+                    android:layout_gravity="start"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:text="SmoothEye"
+                    android:textSize="25dp"
+                    android:textColor="#FAFAFA"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_weight="40"/>
+                <ImageView
+                    android:id="@+id/image_icon_settings"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:src="@drawable/icon_settings"
+                    android:layout_gravity="end"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
 
     <com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview
         android:id="@+id/preview"
@@ -20,4 +60,4 @@
 
     </com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview>
 
-</LinearLayout>
+</RelativeLayout>
