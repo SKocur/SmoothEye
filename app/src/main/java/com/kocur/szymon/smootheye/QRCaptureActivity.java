@@ -54,6 +54,8 @@ public final class QRCaptureActivity extends FragmentActivity {
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
 
+    CameraSource.Builder builder;
+
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
@@ -88,6 +90,7 @@ public final class QRCaptureActivity extends FragmentActivity {
     int height = 0;
 
     boolean isOnSEMENU = false;
+    boolean useFlash = false;
     int choice = 0;
 
     HashMap<Integer,String> availableChoices;
@@ -97,17 +100,32 @@ public final class QRCaptureActivity extends FragmentActivity {
         super.onCreate(icicle);
         setContentView(R.layout.barcode_capture);
 
-        ((ImageView) findViewById(R.id.image_icon_more)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_icon_more).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_more));
             }
         });
 
-        ((ImageView) findViewById(R.id.image_icon_settings)).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_icon_settings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_settings));
+            }
+        });
+
+        findViewById(R.id.image_icon_flashlight).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!useFlash) {
+                    useFlash = true;
+                    ((ImageView) findViewById(R.id.image_icon_flashlight)).setImageResource(R.drawable.icon_flashlight_on);
+                } else {
+                    useFlash = false;
+                    ((ImageView) findViewById(R.id.image_icon_flashlight)).setImageResource(R.drawable.icon_flashlight_off);
+                }
+
+                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_flashlight));
             }
         });
 
@@ -115,8 +133,7 @@ public final class QRCaptureActivity extends FragmentActivity {
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) findViewById(R.id.graphicOverlay);
 
         // read parameters from the intent used to launch the activity.
-        boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
-        boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
+        boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, true);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -130,9 +147,9 @@ public final class QRCaptureActivity extends FragmentActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Pinch/Stretch to zoom",
+        /*Snackbar.make(mGraphicOverlay, "Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
-                .show();
+                .show(); */
 
         availableChoices = new HashMap<Integer, String>();
 
@@ -233,10 +250,6 @@ public final class QRCaptureActivity extends FragmentActivity {
     private void createCameraSource(boolean autoFocus, boolean useFlash) {
         Context context = getApplicationContext();
 
-        // A barcode detector is created to track barcodes.  An associated multi-processor instance
-        // is set to receive the barcode detection results, track the barcodes, and maintain
-        // graphics for each barcode on screen.  The factory is used by the multi-processor to
-        // create a separate tracker instance for each barcode.
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
         barcodeDetector.setProcessor(
@@ -274,9 +287,7 @@ public final class QRCaptureActivity extends FragmentActivity {
         width = display.getWidth();
         height = display.getHeight();
 
-        Toast.makeText(getApplicationContext(), "X: " + width + " Y: " + height, Toast.LENGTH_SHORT).show();
-
-        CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
+        builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(width, height)
                 .setRequestedFps(45.0f);
