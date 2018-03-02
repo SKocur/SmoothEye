@@ -47,4 +47,9 @@ public class SwipeCore extends AppCompatActivity implements ActionBar.TabListene
     @Override
     public void onTabUnselected(Tab tab, FragmentTransaction ft) {
     }
+
+    @Override
+    public void onBackPressed() {
+        this.finishAffinity();
+    }
 }
