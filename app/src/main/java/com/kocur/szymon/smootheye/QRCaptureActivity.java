@@ -1,51 +1,46 @@
 package com.kocur.szymon.smootheye;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Point;
-import android.hardware.Camera;
-import android.os.Build;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 
-import com.google.android.gms.vision.MultiProcessor;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.vision.barcode.Barcode;
-import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.kocur.szymon.smootheye.ui.camera.CameraSource;
 import com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview;
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;
+import com.ontbee.legacyforks.cn.pedant.SweetAlert.SweetAlertDialog;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Locale;
 
-public final class QRCaptureActivity extends FragmentActivity {
+import static android.app.Activity.RESULT_OK;
+
+public final class QRCaptureActivity extends Fragment {
     private static final String TAG = "Barcode-reader";
     private static final int RC_HANDLE_GMS = 9001;
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -54,13 +49,12 @@ public final class QRCaptureActivity extends FragmentActivity {
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
 
-    CameraSource.Builder builder;
-
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
-    private TextToSpeech tts;
+    TextToVoice textToVoice;
+    CameraInit cameraInit;
 
     public static final String AutoFocus = "AutoFocus";
     public static final String UseFlash = "UseFlash";
@@ -96,74 +90,124 @@ public final class QRCaptureActivity extends FragmentActivity {
     HashMap<Integer,String> availableChoices;
 
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        setContentView(R.layout.barcode_capture);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        findViewById(R.id.image_icon_more).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_more));
-            }
-        });
+        final View rootView = inflater.inflate(R.layout.barcode_capture, container, false);
 
-        findViewById(R.id.image_icon_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_settings));
-            }
-        });
+        useFlash = getActivity().getIntent().getBooleanExtra("useFlash", false);
 
-        findViewById(R.id.image_icon_flashlight).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!useFlash) {
-                    useFlash = true;
-                    ((ImageView) findViewById(R.id.image_icon_flashlight)).setImageResource(R.drawable.icon_flashlight_on);
-                } else {
-                    useFlash = false;
-                    ((ImageView) findViewById(R.id.image_icon_flashlight)).setImageResource(R.drawable.icon_flashlight_off);
-                }
+        textToVoice = new TextToVoice(getActivity().getApplicationContext());
+        textToVoice.setSpeechRate(0.6f);
 
-                YoYo.with(Techniques.StandUp).duration(400).playOn(findViewById(R.id.image_icon_flashlight));
-            }
-        });
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        width = display.getWidth();
+        height = display.getHeight();
 
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) findViewById(R.id.graphicOverlay);
+        final SharedPreferences prefs = getActivity().getSharedPreferences("general_settings", Context.MODE_PRIVATE);
+        int isFirstStart = prefs.getInt("is_first_start", 1);
+        if(isFirstStart == 1){
+            TapTargetView.showFor(getActivity(),                 // `this` is an Activity
+                    TapTarget.forView(rootView.findViewById(R.id.image_icon_help), "User Guide", "How does it work?")
+                            // All options below are optional
+                            .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
+                            .titleTextSize(30)                  // Specify the size (in sp) of the title text
+                            .descriptionTextSize(25)            // Specify the size (in sp) of the description text
+                            .textTypeface(Typeface.SANS_SERIF)  // Specify a typeface for the text
+                            .drawShadow(true)                   // Whether to draw a drop shadow or not
+                            .cancelable(false)                  // Whether tapping outside the outer circle dismisses the view
+                            .tintTarget(true)                   // Whether to tint the target view's color
+                            .transparentTarget(false)           // Specify whether the target is transparent (displays the content underneath)
+                            .targetRadius(60),                  // Specify the target radius (in dp)
+                    new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                        @Override
+                        public void onTargetClick(TapTargetView view) {
+                            super.onTargetClick(view);      // This call is optional
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putInt("is_first_start",0);
+                            editor.commit();
 
-        // read parameters from the intent used to launch the activity.
-        boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, true);
-
-        // Check for the camera permission before accessing the camera.  If the
-        // permission is not granted yet, request permission.
-        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource(autoFocus, useFlash);
-        } else {
-            requestCameraPermission();
+                            rootView.findViewById(R.id.image_icon_help).performClick();
+                        }
+                    });
         }
 
-        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
-
-        /*Snackbar.make(mGraphicOverlay, "Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show(); */
-
-        availableChoices = new HashMap<Integer, String>();
-
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+        rootView.findViewById(R.id.image_icon_help).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = tts.setLanguage(Locale.US);
-                    tts.setSpeechRate(0.9f);
+            public void onClick(View view) {
+                YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_help));
 
-                    speak("Hello");
-                }
+                SweetAlertDialog pDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.NORMAL_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText(getString(R.string.user_guide));
+                pDialog.setContentText(getString(R.string.first_step) + "\n\n" +
+                        getString(R.string.second_step) + "\n\n" +
+                        getString(R.string.third_step) + "\n\n" +
+                        getString(R.string.fourth_step) + "\n\n" +
+                        getString(R.string.fifth_step) + "\n");
+                pDialog.setCancelable(false);
+                pDialog.show();
             }
         });
+
+        rootView.findViewById(R.id.image_icon_settings).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_settings));
+                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        rootView.findViewById(R.id.image_icon_smootheye).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                YoYo.with(Techniques.RotateIn).duration(400).playOn(rootView.findViewById(R.id.image_icon_smootheye));
+                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        rootView.findViewById(R.id.image_icon_flashlight).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SwipeCore.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                if(!useFlash) {
+                    useFlash = true;
+                    intent.putExtra("useFlash", useFlash);
+                } else {
+                    useFlash = false;
+                    intent.putExtra("useFlash", useFlash);
+                }
+
+                intent.putExtra("data", choice);
+                intent.putExtra("availableChoices", availableChoices);
+                intent.putExtra("isOnSemenu", isOnSEMENU);
+                intent.putExtra("fragmentID", 1);
+                startActivity(intent);
+
+                YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_flashlight));
+            }
+        });
+
+        choice = getActivity().getIntent().getIntExtra("data", 0);
+        isOnSEMENU = getActivity().getIntent().getBooleanExtra("isOnSemenu", false);
+
+        if(getActivity().getIntent().getSerializableExtra("availableChoices") != null)
+            availableChoices = (HashMap<Integer, String>) getActivity().getIntent().getSerializableExtra("availableChoices");
+        availableChoices = new HashMap<Integer, String>();
+
+        mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
+        mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) rootView.findViewById(R.id.graphicOverlay);
+
+        cameraInit = new CameraInit(getActivity().getApplicationContext(), mCameraSource, mPreview, mGraphicOverlay);
+
+        // read parameters from the intent used to launch the activity.
+        boolean autoFocus = getActivity().getIntent().getBooleanExtra(AutoFocus, true);
+
+        cameraInit.createCameraSource(autoFocus, useFlash, height, width);
 
         handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -177,36 +221,39 @@ public final class QRCaptureActivity extends FragmentActivity {
                 handler.postDelayed(this, 100);
             }
         }, 100);
-    }
 
-    public void speak(String text){
-        if(!tts.isSpeaking()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-            else
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        }
+        return rootView;
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        //setContentView(R.layout.barcode_capture);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == 1309 && resultCode == RESULT_OK){
-            speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
-            choice = Integer.parseInt(data.getStringExtra("data"));
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    for(int i = 0; i < height/100; i++){
-                        for(int j = 0; j < width/100; j++){
-                            onTap(i*150, j*150);
-                        }
-                    }
-                    handler.postDelayed(this, 100);
-                }
-            }, 100);
+            scan(data);
         }
+    }
+
+    void scan(Intent data){
+        textToVoice.speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
+        choice = Integer.parseInt(data.getStringExtra("data"));
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < height/100; i++){
+                    for(int j = 0; j < width/100; j++){
+                        onTap(i*150, j*150);
+                    }
+                }
+                handler.postDelayed(this, 100);
+            }
+        }, 100);
     }
 
     private void requestCameraPermission() {
@@ -214,103 +261,46 @@ public final class QRCaptureActivity extends FragmentActivity {
 
         final String[] permissions = new String[]{Manifest.permission.CAMERA};
 
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+        if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
                 Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(this, permissions, RC_HANDLE_CAMERA_PERM);
+            ActivityCompat.requestPermissions(getActivity(), permissions, RC_HANDLE_CAMERA_PERM);
             return;
         }
 
-        final Activity thisActivity = this;
+        //final Activity thisActivity = this;
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityCompat.requestPermissions(thisActivity, permissions,
+                ActivityCompat.requestPermissions(getActivity(), permissions,
                         RC_HANDLE_CAMERA_PERM);
             }
         };
 
-        findViewById(R.id.topLayout).setOnClickListener(listener);
+        //rootView.findViewById(R.id.topLayout).setOnClickListener(listener);
         Snackbar.make(mGraphicOverlay, R.string.permission_camera_rationale,
                 Snackbar.LENGTH_LONG)
                 .setAction(R.string.ok, listener)
                 .show();
     }
 
-    @Override
+    /*@Override
     public boolean onTouchEvent(MotionEvent e) {
         boolean b = scaleGestureDetector.onTouchEvent(e);
 
         boolean c = gestureDetector.onTouchEvent(e);
 
         return b || c || super.onTouchEvent(e);
-    }
-
-    @SuppressLint("InlinedApi")
-    private void createCameraSource(boolean autoFocus, boolean useFlash) {
-        Context context = getApplicationContext();
-
-        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
-        BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
-        barcodeDetector.setProcessor(
-                new MultiProcessor.Builder<>(barcodeFactory).build());
-
-        if (!barcodeDetector.isOperational()) {
-            // Note: The first time that an app using the barcode or face API is installed on a
-            // device, GMS will download a native libraries to the device in order to do detection.
-            // Usually this completes before the app is run for the first time.  But if that
-            // download has not yet completed, then the above call will not detect any barcodes
-            // and/or faces.
-            //
-            // isOperational() can be used to check if the required native libraries are currently
-            // available.  The detectors will automatically become operational once the library
-            // downloads complete on device.
-            Log.w(TAG, "Detector dependencies are not yet available.");
-
-            // Check for low storage.  If there is low storage, the native library will not be
-            // downloaded, so detection will not become operational.
-            IntentFilter lowstorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
-            boolean hasLowStorage = registerReceiver(null, lowstorageFilter) != null;
-
-            if (hasLowStorage) {
-                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
-                Log.w(TAG, getString(R.string.low_storage_error));
-            }
-        }
-
-        // Creates and starts the camera.  Note that this uses a higher resolution in comparison
-        // to other detection examples to enable the barcode detector to detect small barcodes
-        // at long distances.
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        width = display.getWidth();
-        height = display.getHeight();
-
-        builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
-                .setRequestedPreviewSize(width, height)
-                .setRequestedFps(45.0f);
-
-        // make sure that auto focus is an available option
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            builder = builder.setFocusMode(
-                    autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null);
-        }
-
-        mCameraSource = builder
-                .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
-                .build();
-    }
+    } */
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        startCameraSource();
+        cameraInit.startCameraSource();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         if (mPreview != null) {
             mPreview.stop();
@@ -318,7 +308,7 @@ public final class QRCaptureActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (mPreview != null) {
             mPreview.release();
@@ -338,48 +328,25 @@ public final class QRCaptureActivity extends FragmentActivity {
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
+
             // we have permission, so create the camerasource
-            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);
-            boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
-            createCameraSource(autoFocus, useFlash);
+            boolean autoFocus = getActivity().getIntent().getBooleanExtra(AutoFocus,true);
+            boolean useFlash = getActivity().getIntent().getBooleanExtra(UseFlash, false);
+            cameraInit.createCameraSource(autoFocus, useFlash, height, width);
             return;
         }
 
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
-
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                finish();
+                getActivity().finish();
             }
         };
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Multitracker sample")
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("SmoothEye")
                 .setMessage(R.string.no_camera_permission)
                 .setPositiveButton(R.string.ok, listener)
                 .show();
-    }
-
-    private void startCameraSource() throws SecurityException {
-        // check that the device has play services available.
-        int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
-                getApplicationContext());
-        if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg =
-                    GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS);
-            dlg.show();
-        }
-
-        if (mCameraSource != null) {
-            try {
-                mPreview.start(mCameraSource, mGraphicOverlay);
-            } catch (IOException e) {
-                Log.e(TAG, "Unable to start camera source.", e);
-                mCameraSource.release();
-                mCameraSource = null;
-            }
-        }
     }
 
     /**
@@ -389,7 +356,7 @@ public final class QRCaptureActivity extends FragmentActivity {
      * @param rawY - the raw position of the tap.
      * @return true if the activity is ending.
      */
-    private boolean onTap(float rawX, float rawY) {
+    public boolean onTap(float rawX, float rawY) {
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
         mGraphicOverlay.getLocationOnScreen(location);
@@ -405,14 +372,13 @@ public final class QRCaptureActivity extends FragmentActivity {
                 if (barcode.getBoundingBox().contains((int) x, (int) y)) {
                     // Exact hit, no need to keep looking.
                     best = barcode;
-                    if (isOnSEMENU && best.rawValue.contains("SELeft") && best.rawValue.contains(choice + "") && best.getBoundingBox().height() >= 400)
-                        speak("Turn left");
-                    else if (isOnSEMENU && best.rawValue.contains("SELeft") && best.rawValue.contains(choice + "") && best.getBoundingBox().height() < 400)
-                        speak("After few meters turn left");
-                    else if (isOnSEMENU && best.rawValue.contains("SERight") && best.rawValue.contains(choice + "") && best.getBoundingBox().height() >= 400)
-                        speak("Turn right");
-                    else if (isOnSEMENU && best.rawValue.contains("SERight") && best.rawValue.contains(choice + "") && best.getBoundingBox().height() < 400)
-                        speak("After few meters turn right");
+
+                    if (isOnSEMENU && best.rawValue.contains("#SE-")) {
+                        String[] text = barcode.rawValue.split("#|\\-");
+                        if (Integer.parseInt(text[0]) == choice) {
+                            textToVoice.speak(text[2]);
+                        }
+                    }
                     else if (best.rawValue.contains("SEMENU") && !isOnSEMENU) {
                         isOnSEMENU = true;
 
@@ -423,7 +389,7 @@ public final class QRCaptureActivity extends FragmentActivity {
                                 availableChoices.put(Integer.parseInt(data[i]), data[i + 1]);
                         }
 
-                        Intent intent = new Intent(this, ChoiceActivity.class);
+                        Intent intent = new Intent(getActivity(), ChoiceActivity.class);
                         intent.putExtra("data", best.rawValue);
                         startActivityForResult(intent, 1309);
                         return true;
@@ -433,29 +399,5 @@ public final class QRCaptureActivity extends FragmentActivity {
             }
         }
         return false;
-    }
-
-    private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
-        }
-    }
-
-    private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            return false;
-        }
-
-        @Override
-        public boolean onScaleBegin(ScaleGestureDetector detector) {
-            return true;
-        }
-
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            mCameraSource.doZoom(detector.getScaleFactor());
-        }
     }
 }

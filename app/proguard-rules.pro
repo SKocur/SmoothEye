@@ -17,9 +17,27 @@
 #}
 
 # Uncomment this to preserve the line number information for
-# debugging stack traces.
+# debugging stack traces.`
 #-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+-renamesourcefileattribute SourceFile
+
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn com.daimajia.**
+
+-keepattributes Signature
+-keepattributes *Annotation*
+
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.examples.android.model.** { *; }
+-keep class com.daimajia.easing.** { *; }
+-keep interface com.daimajia.easing.** { *; }
+
+-keep class com.github.** { *; }
+-keep class com.ontbee.** { *; }
+-keep interface com.github.** { *; }
+
+

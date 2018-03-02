@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SmoothEye</string>
+    <string name="activity_hello_allowCameraPermission">Pozwól naszej aplikacji na używanie Twojego aparatu, który stanie się Twoimi oczyma</string>
+    <string name="activity_hello_letsgoButton">Dalej!</string>
+    <string name="activity_more_talkpostThreads">Wątki z TalkPost</string>
+    <string name="activity_more_noContent">Brak wątków</string>
+    <string name="thread_detail_noComments">Brak komentarzy</string>
+    <string name="user_guide">Instrukcja użytkowania</string>
+    <string name="first_step">1. Otwórz aplikację kiedy staniesz przed drzwiami do budynku.</string>
+    <string name="second_step">2. Wyceluj swoje urządzenie na QR-Code znajdujący się na tych drzwiach.</string>
+    <string name="third_step">3. Cele będą się zmieniać dopóki swojego nie wybierzesz.</string>
+    <string name="fourth_step">4. Wyceluj swoje urządzenie w podłoże pod łagodnym kątem.</string>
+    <string name="fifth_step">5. Słuchaj aplikacji i wykonuj polecenia czytane z QR-Code\\\'u na podłożu.</string>
+    <string name="new_feature_in_future">Ta funkcja zostanie dodana w przyszłości.</string>
+    <string name="ok">Ok</string>
+    <string name="permission_camera_rationale">Brak uprawnień dla kamery</string>
+    <string name="no_camera_permission">Aplikacja nie może działać, bo nie ma uprawnień.</string>
+    <string name="low_storage_error">Rozpoznawianie twarzy przestało działać.</string>
+    <string name="title_activity_main">Przykład czytania QR-Code\'u</string>
+    <string name="barcode_header">Kliknij, aby przeczytać</string>
+    <string name="read_barcode">SmoothEye</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Użyj Lampy</string>
+    <string name="barcode_success">Kod QR przeczytany pomyślnie</string>
+    <string name="barcode_failure">Nie przechwycono żadnego QR-Code\'u</string>
+    <string name="barcode_error">Błąd poczas czytania QR-Code\'u</string>
+    <string name="hello_blank_fragment">Posty fragment</string>
+</resources>

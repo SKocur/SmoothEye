@@ -10,12 +10,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Locale;
 
 public class ChoiceActivity extends AppCompatActivity {
 
-    private TextToSpeech tts;
+    TextToVoice textToVoice;
 
     Handler handler;
     Button buttonChoice;
@@ -29,25 +31,12 @@ public class ChoiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choice);
 
+        textToVoice = new TextToVoice(getApplicationContext(), "Choose your destination");
+        textToVoice.setSpeechRate(0.9f);
+
         buttonChoice = (Button) findViewById(R.id.buttonChoice);
 
         availableOptions = new HashMap<String, Integer>();
-
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = tts.setLanguage(Locale.US);
-                    tts.setSpeechRate(0.7f);
-                    speak("Please, choose your destination");
-                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Log.e("TTS", "This Language is not supported");
-                    }
-                } else {
-                    Log.e("TTS", "Initilization Failed!");
-                }
-            }
-        });
 
         handler = new Handler();
 
@@ -69,7 +58,7 @@ public class ChoiceActivity extends AppCompatActivity {
 
                     if(i % QRCaptureActivity.CHOICE_EVEN_SEPARATOR == 0) {
                         availableOptions.put(data[i], Integer.parseInt(data[i-1]));
-                        speak(data[i]);
+                        textToVoice.speak(data[i]);
                         enableOptionOnButton(data[i]);
                         Log.e(">>>>>>>>>>>>>>>>>>", data[i-1]);
                         try {
@@ -92,7 +81,7 @@ public class ChoiceActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         isBackgroundThreadRunning = false;
-                        tts.shutdown();
+                        //tts.shutdown();
                         handler.removeCallbacksAndMessages(null);
                         Intent intent = new Intent();
                         intent.putExtra("data", availableOptions.get(option).toString());
@@ -102,14 +91,5 @@ public class ChoiceActivity extends AppCompatActivity {
                 });
             }
         });
-    }
-
-    public void speak(String text){
-        if(!tts.isSpeaking()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-            else
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-        }
     }
 }

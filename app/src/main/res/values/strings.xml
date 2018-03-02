@@ -1,15 +1,30 @@
 <resources>
-    <string name="app_name">Smooth Eye</string>
+    <string name="app_name">SmoothEye</string>
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="title_activity_main">Barcode Reader Sample</string>
     <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
-    <string name="read_barcode">Read Barcode</string>
+    <string name="read_barcode">Smooth Eye</string>
     <string name="auto_focus">Auto Focus</string>
     <string name="use_flash">Use Flash</string>
     <string name="barcode_success">Barcode read successfully</string>
     <string name="barcode_failure">No barcode captured</string>
     <string name="barcode_error">"Error reading barcode: %1$s"</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="activity_hello_allowCameraPermission">Allow our app to use your camera which will become your eyes</string>
+    <string name="activity_hello_letsgoButton">Let\'s go!</string>
+    <string name="activity_more_talkpostThreads">TalkPost threads</string>
+    <string name="activity_more_noContent">No content</string>
+    <string name="thread_detail_noComments">No comments</string>
+    <string name="user_guide">User guide</string>
+    <string name="first_step">1. Open your app when you are standing in front of door to the building.</string>
+    <string name="second_step">2. Aim your device into QR-Code on the door.</string>
+    <string name="third_step">3. Targets will be switching till you choose your desired one by clicking on it.</string>
+    <string name="fourth_step">4. Aim your device into floor at a gentle angle.</string>
+    <string name="fifth_step">5. Listen to your app and follow the instructions which will be read from QR-Code on the floor.</string>
+    <string name="new_feature_in_future">This feature will be added in the future.</string>
 </resources>

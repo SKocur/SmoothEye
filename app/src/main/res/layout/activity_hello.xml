@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.kocur.szymon.smootheye.HelloActivity"
+    android:background="@drawable/clouds">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="20dp"
+        android:fontFamily="casual"
+        android:text="@string/activity_hello_allowCameraPermission"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="#FAFAFA"
+        android:textSize="25dp" />
+
+    <Button
+        android:id="@+id/hello_button_letsgo"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:fontFamily="casual"
+        android:text="@string/activity_hello_letsgoButton" />
+
+</LinearLayout>

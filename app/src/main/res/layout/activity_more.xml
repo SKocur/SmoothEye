@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA"
+    tools:context="com.kocur.szymon.smootheye.MoreActivity">
+
+    <ImageView
+        android:id="@+id/image_background_logo"
+        android:scaleType="centerCrop"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/clouds" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <eightbitlab.com.blurview.BlurView
+            android:id="@+id/blurView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:outlineProvider="bounds"
+            app:blurOverlayColor="#78ffffff">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="@string/activity_more_talkpostThreads"
+                    android:fontFamily="sans-serif-light"
+                    android:textSize="20dp"
+                    android:textColor="#FAFAFA"
+                    android:layout_margin="15dp"/>
+            </RelativeLayout>
+        </eightbitlab.com.blurview.BlurView>
+        <com.baoyz.widget.PullRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ScrollView
+                android:id="@+id/scroll_list_threads"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/list_thread"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/threads_list_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/activity_more_noContent"
+                        android:textColor="#2196F3"
+                        android:textSize="17dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </ScrollView>
+        </com.baoyz.widget.PullRefreshLayout>
+    </LinearLayout>
+</RelativeLayout>

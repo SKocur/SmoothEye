@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/clouds"
+    tools:context="com.kocur.szymon.smootheye.ThreadDetailActivity">
+
+    <ScrollView
+        android:id="@+id/scroll_thread_details"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:clickable="true"
+                style="?android:borderlessButtonStyle"
+                android:foreground="?android:attr/selectableItemBackground"
+                card_view:cardBackgroundColor="#D9ffffff"
+                android:layout_margin="3dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <android.support.percent.PercentRelativeLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/text_thread_name"
+                        android:transitionName="thread_name_transition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="false"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center_horizontal"
+                        android:text="Thread Name"
+                        android:textAlignment="center"
+                        android:textColor="#616161"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_thread_author"
+                        android:transitionName="thread_name_author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/text_thread_name"
+                        android:layout_margin="4dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="Thread Author"
+                        android:textSize="17dp"
+                        android:textColor="#9E9E9E"
+                        android:textStyle="italic"
+                        app:layout_marginRightPercent="55%"/>
+
+                    <TextView
+                        android:id="@+id/text_thread_created_date"
+                        android:transitionName="thread_created_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/text_thread_name"
+                        android:layout_margin="4dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="Thread Created Date"
+                        android:textSize="17dp"
+                        android:textColor="#FB8C00"
+                        app:layout_marginLeftPercent="30%"/>
+                </android.support.percent.PercentRelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:clickable="true"
+                style="?android:borderlessButtonStyle"
+                android:foreground="?android:attr/selectableItemBackground"
+                card_view:cardBackgroundColor="#D9ffffff"
+                android:layout_margin="3dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="3dp">
+
+                    <TextView
+                        android:id="@+id/text_thread_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="false"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="start"
+                        android:text="Thread Content"
+                        android:textSize="18dp" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                android:clickable="true"
+                style="?android:borderlessButtonStyle"
+                android:foreground="?android:attr/selectableItemBackground"
+                card_view:cardBackgroundColor="#D9ffffff"
+                android:layout_margin="3dp"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:id="@+id/list_comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/comment_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/thread_detail_noComments"
+                        android:textColor="#2196F3"
+                        android:textSize="17dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
