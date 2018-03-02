@@ -36,7 +36,7 @@ public class ChoiceActivity extends AppCompatActivity {
 
         buttonChoice = (Button) findViewById(R.id.buttonChoice);
 
-        availableOptions = new HashMap<String, Integer>();
+        availableOptions = new HashMap<>();
 
         handler = new Handler();
 
@@ -49,18 +49,22 @@ public class ChoiceActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String intentData = intent.getStringExtra("data");
         final String data[] = intentData.split("[-]");
+
         @Override
         public void run(){
-            while(isBackgroundThreadRunning) {
-                for(int i = 1; i < data.length; i++){
-                    if(!isBackgroundThreadRunning)
+            while (isBackgroundThreadRunning) {
+                for (int i = 1; i < data.length; i++) {
+                    if (!isBackgroundThreadRunning) {
                         break;
+                    }
 
-                    if(i % QRCaptureActivity.CHOICE_EVEN_SEPARATOR == 0) {
+                    if (i % QRCaptureActivity.CHOICE_EVEN_SEPARATOR == 0) {
                         availableOptions.put(data[i], Integer.parseInt(data[i-1]));
                         textToVoice.speak(data[i]);
                         enableOptionOnButton(data[i]);
+
                         Log.e(">>>>>>>>>>>>>>>>>>", data[i-1]);
+
                         try {
                             Thread.sleep(data[i].length() * 450);
                         } catch (InterruptedException e) {
@@ -72,7 +76,7 @@ public class ChoiceActivity extends AppCompatActivity {
         }
     }
 
-    public void enableOptionOnButton(final String option){
+    public void enableOptionOnButton(final String option) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -81,7 +85,6 @@ public class ChoiceActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         isBackgroundThreadRunning = false;
-                        //tts.shutdown();
                         handler.removeCallbacksAndMessages(null);
                         Intent intent = new Intent();
                         intent.putExtra("data", availableOptions.get(option).toString());

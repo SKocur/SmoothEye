@@ -14,9 +14,9 @@ import android.support.v7.widget.Toolbar;
  */
 
 public class SwipeCore extends AppCompatActivity implements ActionBar.TabListener {
+
     private ViewPager viewPager;
     private SwipeAdapter mAdapter;
-    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,38 +28,11 @@ public class SwipeCore extends AppCompatActivity implements ActionBar.TabListene
 
         int fragmentID = getIntent().getIntExtra("fragmentID", 1);
 
-
-        // Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);
-        //actionBar = getActionBar();
         mAdapter = new SwipeAdapter(getSupportFragmentManager());
 
         viewPager.setAdapter(mAdapter);
         viewPager.setCurrentItem(fragmentID, false);
-
-        /*actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        this.getActionBar().setDisplayHomeAsUpEnabled(true);
-        actionBar.addTab(actionBar.newTab().setIcon(R.drawable.icon_more).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setIcon(R.drawable.logo_smootheye).setTabListener(this));
-        actionBar.addTab(actionBar.newTab().setIcon(R.drawable.icon_settings).setTabListener(this));
-
-        viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageSelected(int position) {
-                // on changing the page
-                // make respected tab selected
-                actionBar.setSelectedNavigationItem(position);
-            }
-
-            @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int arg0) {
-            }
-        }); */
     }
 
     @Override
@@ -68,8 +41,6 @@ public class SwipeCore extends AppCompatActivity implements ActionBar.TabListene
 
     @Override
     public void onTabSelected(Tab tab, FragmentTransaction ft) {
-        // on tab selected
-        // show respected fragment view
         viewPager.setCurrentItem(tab.getPosition());
     }
 

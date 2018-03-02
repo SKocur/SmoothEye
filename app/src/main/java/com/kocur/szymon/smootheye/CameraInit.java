@@ -14,7 +14,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.kocur.szymon.smootheye.interfaces.ICameraInit;
 import com.kocur.szymon.smootheye.ui.camera.CameraSource;
 import com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview;
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;
@@ -25,7 +24,8 @@ import java.io.IOException;
  * Created by Szymon Kocur on 2017-10-14.
  */
 
-public class CameraInit extends Activity implements ICameraInit {
+public class CameraInit extends Activity {
+
     static Context mContext;
     CameraSource mCameraSource;
     CameraSourcePreview mPreview;
@@ -40,7 +40,6 @@ public class CameraInit extends Activity implements ICameraInit {
     }
 
     @SuppressLint("InlinedApi")
-    @Override
     public void createCameraSource(boolean autoFocus, boolean useFlash, int width, int height) {
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(mContext).build();
         BarcodeTrackerFactory barcodeFactory = new BarcodeTrackerFactory(mGraphicOverlay);
@@ -88,7 +87,6 @@ public class CameraInit extends Activity implements ICameraInit {
                 .build();
     }
 
-    @Override
     public void startCameraSource() throws SecurityException {
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(

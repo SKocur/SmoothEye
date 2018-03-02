@@ -4,15 +4,13 @@ import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 
-import com.kocur.szymon.smootheye.interfaces.ITextToVoice;
-
 import java.util.Locale;
 
 /**
  * Created by Szymon Kocur on 2017-10-13.
  */
 
-public class TextToVoice implements ITextToVoice {
+public class TextToVoice {
 
     private TextToSpeech tts;
     private float speechRate;
@@ -40,13 +38,11 @@ public class TextToVoice implements ITextToVoice {
         });
     }
 
-    @Override
     public void setSpeechRate(float rate){
         this.speechRate = rate;
         tts.setSpeechRate(speechRate);
     }
 
-    @Override
     public void speak(String text){
         if(!tts.isSpeaking()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)

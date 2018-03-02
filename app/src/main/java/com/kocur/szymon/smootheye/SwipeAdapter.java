@@ -17,7 +17,7 @@ public class SwipeAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int i){
        switch(i){
            case 0:
-               return new MoreActivity();
+               return new ThreadsActivity();
            case 1:
                return new QRCaptureActivity();
        }

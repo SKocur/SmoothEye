@@ -42,16 +42,11 @@ import static android.app.Activity.RESULT_OK;
 
 public final class QRCaptureActivity extends Fragment {
     private static final String TAG = "Barcode-reader";
-    private static final int RC_HANDLE_GMS = 9001;
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-
-    // helper objects for detecting taps and pinches.
-    private ScaleGestureDetector scaleGestureDetector;
-    private GestureDetector gestureDetector;
 
     TextToVoice textToVoice;
     CameraInit cameraInit;
@@ -108,6 +103,7 @@ public final class QRCaptureActivity extends Fragment {
 
         final SharedPreferences prefs = getActivity().getSharedPreferences("general_settings", Context.MODE_PRIVATE);
         int isFirstStart = prefs.getInt("is_first_start", 1);
+
         if(isFirstStart == 1){
             TapTargetView.showFor(getActivity(),                 // `this` is an Activity
                     TapTarget.forView(rootView.findViewById(R.id.image_icon_help), "User Guide", "How does it work?")
@@ -174,7 +170,7 @@ public final class QRCaptureActivity extends Fragment {
                 Intent intent = new Intent(getActivity(), SwipeCore.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                if(!useFlash) {
+                if (!useFlash) {
                     useFlash = true;
                     intent.putExtra("useFlash", useFlash);
                 } else {
@@ -195,9 +191,10 @@ public final class QRCaptureActivity extends Fragment {
         choice = getActivity().getIntent().getIntExtra("data", 0);
         isOnSEMENU = getActivity().getIntent().getBooleanExtra("isOnSemenu", false);
 
-        if(getActivity().getIntent().getSerializableExtra("availableChoices") != null)
+        if (getActivity().getIntent().getSerializableExtra("availableChoices") != null) {
             availableChoices = (HashMap<Integer, String>) getActivity().getIntent().getSerializableExtra("availableChoices");
-        availableChoices = new HashMap<Integer, String>();
+        }
+        availableChoices = new HashMap<>();
 
         mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) rootView.findViewById(R.id.graphicOverlay);
@@ -213,8 +210,8 @@ public final class QRCaptureActivity extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < height/100; i++){
-                    for(int j = 0; j < width/100; j++){
+                for (int i = 0; i < height/100; i++) {
+                    for (int j = 0; j < width/100; j++) {
                         onTap(i*150, j*150);
                     }
                 }
@@ -228,26 +225,25 @@ public final class QRCaptureActivity extends Fragment {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        //setContentView(R.layout.barcode_capture);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 1309 && resultCode == RESULT_OK){
+        if (requestCode == 1309 && resultCode == RESULT_OK) {
             scan(data);
         }
     }
 
-    void scan(Intent data){
+    void scan(Intent data) {
         textToVoice.speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
         choice = Integer.parseInt(data.getStringExtra("data"));
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                for(int i = 0; i < height/100; i++){
-                    for(int j = 0; j < width/100; j++){
+                for (int i = 0; i < height/100; i++){
+                    for (int j = 0; j < width/100; j++) {
                         onTap(i*150, j*150);
                     }
                 }
@@ -255,43 +251,6 @@ public final class QRCaptureActivity extends Fragment {
             }
         }, 100);
     }
-
-    private void requestCameraPermission() {
-        Log.w(TAG, "Camera permission is not granted. Requesting permission");
-
-        final String[] permissions = new String[]{Manifest.permission.CAMERA};
-
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(getActivity(), permissions, RC_HANDLE_CAMERA_PERM);
-            return;
-        }
-
-        //final Activity thisActivity = this;
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityCompat.requestPermissions(getActivity(), permissions,
-                        RC_HANDLE_CAMERA_PERM);
-            }
-        };
-
-        //rootView.findViewById(R.id.topLayout).setOnClickListener(listener);
-        Snackbar.make(mGraphicOverlay, R.string.permission_camera_rationale,
-                Snackbar.LENGTH_LONG)
-                .setAction(R.string.ok, listener)
-                .show();
-    }
-
-    /*@Override
-    public boolean onTouchEvent(MotionEvent e) {
-        boolean b = scaleGestureDetector.onTouchEvent(e);
-
-        boolean c = gestureDetector.onTouchEvent(e);
-
-        return b || c || super.onTouchEvent(e);
-    } */
 
     @Override
     public void onResume() {
@@ -310,6 +269,7 @@ public final class QRCaptureActivity extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
         if (mPreview != null) {
             mPreview.release();
         }
@@ -363,9 +323,7 @@ public final class QRCaptureActivity extends Fragment {
         float x = (rawX - location[0]) / mGraphicOverlay.getWidthScaleFactor();
         float y = (rawY - location[1]) / mGraphicOverlay.getHeightScaleFactor();
 
-        // Find the barcode whose center is closest to the tapped point.
-        Barcode best = null;
-        float bestDistance = Float.MAX_VALUE;
+        Barcode best;
         for (BarcodeGraphic graphic : mGraphicOverlay.getGraphics()) {
             Barcode barcode = graphic.getBarcode();
             if(barcode.getBoundingBox() != null) {
@@ -378,15 +336,15 @@ public final class QRCaptureActivity extends Fragment {
                         if (Integer.parseInt(text[0]) == choice) {
                             textToVoice.speak(text[2]);
                         }
-                    }
-                    else if (best.rawValue.contains("SEMENU") && !isOnSEMENU) {
+                    } else if (best.rawValue.contains("SEMENU") && !isOnSEMENU) {
                         isOnSEMENU = true;
 
                         final String data[] = best.rawValue.split("[-]");
-                        for(int i = 1; i < data.length; i++) {
+                        for (int i = 1; i < data.length; i++) {
                             Log.e(">>>>>>>>>>>>>>>>>>>>", data[i]);
-                            if(i % CHOICE_EVEN_SEPARATOR != 0)
+                            if (i % CHOICE_EVEN_SEPARATOR != 0) {
                                 availableChoices.put(Integer.parseInt(data[i]), data[i + 1]);
+                            }
                         }
 
                         Intent intent = new Intent(getActivity(), ChoiceActivity.class);

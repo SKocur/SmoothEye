@@ -41,7 +41,7 @@
             android:label="Read Barcode" />
         -->
         <activity android:name=".ChoiceActivity" />
-        <!-- <activity android:name=".MoreActivity"></activity> -->
+        <!-- <activity android:namThreadsActivityvity"></activity> -->
         <activity android:name=".ThreadDetailActivity" />
         <activity android:name=".HelloActivity">
             <intent-filter>

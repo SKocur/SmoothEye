@@ -36,7 +36,7 @@ import okhttp3.Response;
 
 import static com.google.android.gms.internal.zzid.runOnUiThread;
 
-public class MoreActivity extends Fragment {
+public class ThreadsActivity extends Fragment {
     LinearLayout list;
     View listInfo;
 
@@ -65,7 +65,7 @@ public class MoreActivity extends Fragment {
                 .blurAlgorithm(new RenderScriptBlur(getActivity().getApplicationContext()))
                 .blurRadius(8);
 
-        if(isNetworkAvailable()) {
+        if (isNetworkAvailable()) {
             DownloadContent downloadContent = new DownloadContent();
             downloadContent.start();
         }
@@ -76,7 +76,7 @@ public class MoreActivity extends Fragment {
         layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(isNetworkAvailable()) {
+                if (isNetworkAvailable()) {
                     list.removeAllViews();
                     DownloadContent downloadContent = new DownloadContent();
                     downloadContent.start();
@@ -126,17 +126,15 @@ public class MoreActivity extends Fragment {
                 for (ThreadPOJO item : threadPOJOs) {
                     try {
                         Thread.sleep(200);
-                    } catch (InterruptedException e){
-
+                    } catch (InterruptedException e) {
                     }
+
                     publishProgress(item);
                 }
             } catch (MalformedURLException e) {
-                //Toast.makeText(getActivity().getApplicationContext(), "Wrong URL request", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             } catch (IOException e) {
-            } catch (Exception e){
-                //TODO: Make handling -> "error": "No content" response from the server
-                //Toast.makeText(getActivity(), "No content", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         }
     }
@@ -144,18 +142,19 @@ public class MoreActivity extends Fragment {
     private void publishProgress(final ThreadPOJO mThreadPOJO) {
         runOnUiThread(new Runnable() {
             LayoutInflater inflater = (LayoutInflater) getActivity().getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            LinearLayout layout = null;
-            TextView threadName = null;
-            TextView threadCreatedDate = null;
-            TextView threadActiveDate = null;
-            TextView threadCreatedBy = null;
+            LinearLayout layout;
+            TextView threadName;
+            TextView threadCreatedDate;
+            TextView threadActiveDate;
+            TextView threadCreatedBy;
             CardView cardView;
             ThreadPOJO threadPOJO;
 
             @Override
             public void run() {
-                if(listInfo.getVisibility() == View.VISIBLE)
+                if (listInfo.getVisibility() == View.VISIBLE) {
                     listInfo.setVisibility(View.GONE);
+                }
 
                 layout = (LinearLayout) inflater.inflate(R.layout.item_thread, null);
                 cardView = (CardView) layout.findViewById(R.id.card_view);
@@ -192,7 +191,8 @@ public class MoreActivity extends Fragment {
                     });
 
                     list.addView(layout);
-                } catch (Exception e){
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

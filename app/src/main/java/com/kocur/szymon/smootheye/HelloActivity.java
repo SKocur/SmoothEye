@@ -18,7 +18,7 @@ public class HelloActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(!checkCameraPermission()) {
+        if (!checkCameraPermission()) {
             setContentView(R.layout.activity_hello);
 
             findViewById(R.id.hello_button_letsgo).setOnClickListener(new View.OnClickListener() {
@@ -60,9 +60,7 @@ public class HelloActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkCameraPermission()
-    {
-
+    private boolean checkCameraPermission() {
         String permission = "android.permission.CAMERA";
         int res =getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
