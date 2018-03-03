@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kocur.szymon.smootheye;
+package com.kocur.szymon.smootheye.Barcode;
 
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.Detector;
@@ -26,7 +26,7 @@ import com.google.android.gms.vision.barcode.Barcode;
  * to an overlay, update the graphics as the item changes, and remove the graphics when the item
  * goes away.
  */
-class BarcodeGraphicTracker extends Tracker<Barcode> {
+public class BarcodeGraphicTracker extends Tracker<Barcode> {
     private GraphicOverlay<BarcodeGraphic> mOverlay;
     private BarcodeGraphic mGraphic;
 

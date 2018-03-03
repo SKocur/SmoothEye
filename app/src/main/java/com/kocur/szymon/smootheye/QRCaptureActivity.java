@@ -22,6 +22,8 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.kocur.szymon.smootheye.Barcode.BarcodeGraphic;
+import com.kocur.szymon.smootheye.Barcode.CameraInit;
 import com.kocur.szymon.smootheye.ui.camera.CameraSource;
 import com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview;
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;

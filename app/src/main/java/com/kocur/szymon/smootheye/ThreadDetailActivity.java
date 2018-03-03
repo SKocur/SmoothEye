@@ -43,7 +43,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
         OverScrollDecoratorHelper.setUpOverScroll((ScrollView) findViewById(R.id.scroll_thread_details));
 
-        if(isNetworkAvailable()) {
+        if(Tools.isNetworkAvailable(getApplicationContext())) {
             new DownloadContent().start();
             new DownloadContentComments().start();
         } else {
@@ -180,11 +180,5 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
         Response response = client.newCall(request).execute();
         return response.body().string();
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

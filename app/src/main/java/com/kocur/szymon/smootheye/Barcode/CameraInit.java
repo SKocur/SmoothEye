@@ -1,4 +1,4 @@
-package com.kocur.szymon.smootheye;
+package com.kocur.szymon.smootheye.Barcode;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,6 +14,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.vision.MultiProcessor;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.kocur.szymon.smootheye.Barcode.BarcodeGraphic;
+import com.kocur.szymon.smootheye.Barcode.BarcodeTrackerFactory;
+import com.kocur.szymon.smootheye.R;
 import com.kocur.szymon.smootheye.ui.camera.CameraSource;
 import com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview;
 import com.kocur.szymon.smootheye.ui.camera.GraphicOverlay;
@@ -32,8 +35,8 @@ public class CameraInit extends Activity {
     GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
     CameraSource.Builder builder;
 
-    CameraInit(Context context, CameraSource mCameraSource, CameraSourcePreview mPreview, GraphicOverlay<BarcodeGraphic> mGraphicOverlay){
-        this.mContext = context;
+    public CameraInit(Context context, CameraSource mCameraSource, CameraSourcePreview mPreview, GraphicOverlay<BarcodeGraphic> mGraphicOverlay){
+        mContext = context;
         this.mCameraSource = mCameraSource;
         this.mPreview = mPreview;
         this.mGraphicOverlay = mGraphicOverlay;

@@ -65,7 +65,7 @@ public class ThreadsActivity extends Fragment {
                 .blurAlgorithm(new RenderScriptBlur(getActivity().getApplicationContext()))
                 .blurRadius(8);
 
-        if (isNetworkAvailable()) {
+        if (Tools.isNetworkAvailable(getActivity().getApplicationContext())) {
             DownloadContent downloadContent = new DownloadContent();
             downloadContent.start();
         }
@@ -76,7 +76,7 @@ public class ThreadsActivity extends Fragment {
         layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (isNetworkAvailable()) {
+                if (Tools.isNetworkAvailable(getActivity().getApplicationContext())) {
                     list.removeAllViews();
                     DownloadContent downloadContent = new DownloadContent();
                     downloadContent.start();
@@ -197,11 +197,5 @@ public class ThreadsActivity extends Fragment {
                 }
             }
         });
-    }
-
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
