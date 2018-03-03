@@ -46,8 +46,9 @@ public class ThreadDetailActivity extends AppCompatActivity {
         if(isNetworkAvailable()) {
             new DownloadContent().start();
             new DownloadContentComments().start();
-        } else
+        } else {
             Toast.makeText(getApplicationContext(), "No internet connection!", Toast.LENGTH_LONG).show();
+        }
 
         list = (LinearLayout) findViewById(R.id.list_comments);
     }
@@ -66,24 +67,22 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException e){
-
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 publishProgress(threadPOJO);
 
             } catch (MalformedURLException e) {
-                //Toast.makeText(getActivity().getApplicationContext(), "Wrong URL request", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             } catch (IOException e) {
-            } catch (Exception e){
-                //TODO: Make handling -> "error": "No content" response from the server
-                //Toast.makeText(getActivity(), "No content", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         }
     }
 
     private void publishProgress(final ThreadPOJO mThreadPOJO) {
         ThreadDetailActivity.this.runOnUiThread(new Runnable() {
-            TextView threadTextContent = null;
+            TextView threadTextContent;
             ThreadPOJO threadPOJO;
 
             @Override
@@ -95,12 +94,13 @@ public class ThreadDetailActivity extends AppCompatActivity {
                     String[] data = threadPOJO.threadText.split("<br />");
                     String content = "";
 
-                    for(String line : data)
+                    for (String line : data) {
                         content += line;
+                    }
 
                     threadTextContent.setText(content);
-                } catch(Exception e){
-                    Toast.makeText(getApplicationContext(), "Error: " + e.toString(), Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -121,17 +121,15 @@ public class ThreadDetailActivity extends AppCompatActivity {
                 for (CommentPOJO item : commentPOJOs) {
                     try {
                         Thread.sleep(200);
-                    } catch (InterruptedException e){
-
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                     publishProgressComments(item);
                 }
             } catch (MalformedURLException e) {
-                //Toast.makeText(getActivity().getApplicationContext(), "Wrong URL request", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             } catch (IOException e) {
-            } catch (Exception e){
-                //TODO: Make handling -> "error": "No content" response from the server
-                //Toast.makeText(getActivity(), "No content", Toast.LENGTH_LONG).show();
+                e.printStackTrace();
             }
         }
     }
@@ -147,7 +145,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
 
             @Override
             public void run() {
-                ((TextView) findViewById(R.id.comment_info)).setVisibility(View.GONE);
+                findViewById(R.id.comment_info).setVisibility(View.GONE);
 
                 layout = (LinearLayout) inflater.inflate(R.layout.item_comment, null);
                 commentText = (TextView) layout.findViewById(R.id.comment_text);
@@ -166,12 +164,12 @@ public class ThreadDetailActivity extends AppCompatActivity {
                     commentOwner.setText(commentPOJO.commentOwner);
 
                     list.addView(layout);
-                } catch (Exception e){
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
     }
-
 
     String runUrl(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();

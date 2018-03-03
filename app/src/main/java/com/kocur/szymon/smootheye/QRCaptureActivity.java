@@ -212,11 +212,6 @@ public final class QRCaptureActivity extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -250,6 +245,7 @@ public final class QRCaptureActivity extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+
         if (mPreview != null) {
             mPreview.stop();
         }
