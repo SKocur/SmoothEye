@@ -11,4 +11,8 @@ The main purpose of the SmoothEye application is to help blind and vision impair
 
 First launch                                         | User guide dialog
 :---------------------------------------------------:|:-------------------------------------------------:
-<img src="images/first_launch_screen.png" width=48%> |<img src="images/user_guide_screen.png" width=48%>
+<img src="images/first_launch_screen.png" width=60%> |<img src="images/user_guide_screen.png" width=60%>
+
+Permission screen                                    | QR-Code Detecion
+:---------------------------------------------------:|:-------------------------------------------------:
+<img src="images/hello_screen.png" width=60%>        |<img src="images/scanning_screen.png" width=60%>
