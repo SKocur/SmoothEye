@@ -181,6 +181,7 @@ public class ThreadsActivity extends Fragment {
                             intent.putExtra("threadCreatedBy", threadPOJO.threadCreatedBy);
                             intent.putExtra("threadID", threadPOJO.threadID);
 
+                            // To create astonishing transitions of views between activities.
                             Pair<View, String> p1 = Pair.create(layout.findViewById(R.id.thread_name), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_name)));
                             Pair<View, String> p2 = Pair.create(layout.findViewById(R.id.thread_author), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_author)));
                             Pair<View, String> p3 = Pair.create(layout.findViewById(R.id.thread_created_date), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_created_date)));
