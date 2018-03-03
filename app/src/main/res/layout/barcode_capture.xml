@@ -5,21 +5,25 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:background="@null"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:padding="7dp">
+            android:padding="7dp"
+            >
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <ImageView
                     android:id="@+id/image_icon_help"
@@ -38,7 +42,8 @@
                     android:gravity="center_vertical"
                     android:layout_centerInParent="true"
                     android:src="@drawable/logo_smootheye"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    />
 
                 <ImageView
                     android:id="@+id/image_icon_settings"
@@ -48,7 +53,8 @@
                     android:layout_alignParentEnd="true"
                     android:padding="2dp"
                     android:src="@drawable/icon_settings"
-                    android:layout_gravity="end" />
+                    android:layout_gravity="end"
+                    />
             </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
@@ -63,7 +69,8 @@
         <com.kocur.szymon.smootheye.ui.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            />
 
     </com.kocur.szymon.smootheye.ui.camera.CameraSourcePreview>
 
@@ -75,6 +82,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
         android:padding="2dp"
-        android:src="@drawable/icon_flashlight_off"
-        android:layout_gravity="start" />
+        android:src="@drawable/icon_flashlight_default"
+        android:layout_gravity="start"
+        />
 </RelativeLayout>
