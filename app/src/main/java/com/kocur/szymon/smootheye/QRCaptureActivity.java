@@ -1,17 +1,13 @@
 package com.kocur.szymon.smootheye;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
@@ -36,8 +32,6 @@ import java.util.HashMap;
 import static android.app.Activity.RESULT_OK;
 
 public final class QRCaptureActivity extends Fragment {
-    private static final String TAG = "Barcode-reader";
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
@@ -269,39 +263,6 @@ public final class QRCaptureActivity extends Fragment {
             mPreview.release();
         }
         handler.removeCallbacksAndMessages(null);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
-            Log.d(TAG, "Got unexpected permission result: " + requestCode);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            return;
-        }
-
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Camera permission granted - initialize the camera source");
-
-            // we have permission, so create the camerasource
-            boolean autoFocus = getActivity().getIntent().getBooleanExtra(AutoFocus,true);
-            boolean useFlash = getActivity().getIntent().getBooleanExtra(UseFlash, false);
-            cameraInit.createCameraSource(autoFocus, useFlash, height, width);
-            return;
-        }
-
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                getActivity().finish();
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("SmoothEye")
-                .setMessage(R.string.no_camera_permission)
-                .setPositiveButton(R.string.ok, listener)
-                .show();
     }
 
     /**
