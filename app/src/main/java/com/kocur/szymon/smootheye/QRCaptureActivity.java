@@ -35,15 +35,23 @@ import static android.app.Activity.RESULT_OK;
 
 public final class QRCaptureActivity extends Fragment {
 
+    private int WIDTH = 0;
+    private int HEIGHT = 0;
+
+    private boolean isOnSEMENU = false;
+    private boolean useFlash = false;
+    private int choice = 0;
+
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
 
-    TextToVoice textToVoice;
-    CameraInit cameraInit;
+    private HashMap<Integer,String> availableChoices;
 
-    public static final String AutoFocus = "AutoFocus";
-    public static final String UseFlash = "UseFlash";
+    private TextToVoice textToVoice;
+    private CameraInit cameraInit;
+
+    private Handler handler;
 
     /**
      *  Data is formatted into QR Code in format:
@@ -61,19 +69,8 @@ public final class QRCaptureActivity extends Fragment {
      *
      *  All of these places can be divided by two and we can use this property to extract them.
      * */
-
     public static final int CHOICE_EVEN_SEPARATOR = 2;
-
-    Handler handler;
-
-    int width = 0;
-    int height = 0;
-
-    boolean isOnSEMENU = false;
-    boolean useFlash = false;
-    int choice = 0;
-
-    HashMap<Integer,String> availableChoices;
+    private final boolean USE_AUTO_FOCUS = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,11 +83,18 @@ public final class QRCaptureActivity extends Fragment {
         textToVoice = new TextToVoice(getActivity().getApplicationContext());
         textToVoice.setSpeechRate(0.6f);
 
+        mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
+        mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) rootView.findViewById(R.id.graphicOverlay);
+
+        cameraInit = new CameraInit(getActivity().getApplicationContext(), mCameraSource, mPreview, mGraphicOverlay);
+
         Display display = getActivity().getWindowManager().getDefaultDisplay();
+
         Point size = new Point();
         display.getSize(size);
-        width = display.getWidth();
-        height = display.getHeight();
+
+        WIDTH = display.getWidth();
+        HEIGHT = display.getHeight();
 
         final SharedPreferences prefs = getActivity().getSharedPreferences("general_settings", Context.MODE_PRIVATE);
         int isFirstStart = prefs.getInt("is_first_start", 1);
@@ -98,7 +102,6 @@ public final class QRCaptureActivity extends Fragment {
         if(isFirstStart == 1){
             TapTargetView.showFor(getActivity(),                 // `this` is an Activity
                     TapTarget.forView(rootView.findViewById(R.id.image_icon_help), "User Guide", "How does it work?")
-                            // All options below are optional
                             .outerCircleAlpha(0.96f)            // Specify the alpha amount for the outer circle
                             .titleTextSize(30)                  // Specify the size (in sp) of the title text
                             .descriptionTextSize(25)            // Specify the size (in sp) of the description text
@@ -185,27 +188,16 @@ public final class QRCaptureActivity extends Fragment {
         if (getActivity().getIntent().getSerializableExtra("availableChoices") != null) {
             availableChoices = (HashMap<Integer, String>) getActivity().getIntent().getSerializableExtra("availableChoices");
         }
+
         availableChoices = new HashMap<>();
 
-        mPreview = (CameraSourcePreview) rootView.findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay<BarcodeGraphic>) rootView.findViewById(R.id.graphicOverlay);
-
-        cameraInit = new CameraInit(getActivity().getApplicationContext(), mCameraSource, mPreview, mGraphicOverlay);
-
-        // read parameters from the intent used to launch the activity.
-        boolean autoFocus = getActivity().getIntent().getBooleanExtra(AutoFocus, true);
-
-        cameraInit.createCameraSource(autoFocus, useFlash, height, width);
+        cameraInit.createCameraSource(USE_AUTO_FOCUS, useFlash, HEIGHT, WIDTH);
 
         handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < height/100; i++) {
-                    for (int j = 0; j < width/100; j++) {
-                        onTap(i*150, j*150);
-                    }
-                }
+                scanLoop();
                 handler.postDelayed(this, 100);
             }
         }, 100);
@@ -222,20 +214,24 @@ public final class QRCaptureActivity extends Fragment {
         }
     }
 
-    void scan(Intent data) {
+    private void scan(Intent data) {
         textToVoice.speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
         choice = Integer.parseInt(data.getStringExtra("data"));
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < height/100; i++){
-                    for (int j = 0; j < width/100; j++) {
-                        onTap(i*150, j*150);
-                    }
-                }
+                scanLoop();
                 handler.postDelayed(this, 100);
             }
         }, 100);
+    }
+
+    private void scanLoop() {
+        for (int i = 0; i < HEIGHT /100; i++){
+            for (int j = 0; j < WIDTH /100; j++) {
+                checkScreenSector(i*150, j*150);
+            }
+        }
     }
 
     @Override
@@ -264,13 +260,13 @@ public final class QRCaptureActivity extends Fragment {
     }
 
     /**
-     * onTap returns the tapped barcode result to the calling Activity.
+     * checkScreenSector returns the tapped barcode result to the calling Activity.
      *
      * @param rawX - the raw position of the tap
      * @param rawY - the raw position of the tap.
      * @return true if the activity is ending.
      */
-    public boolean onTap(float rawX, float rawY) {
+    public boolean checkScreenSector(float rawX, float rawY) {
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
         mGraphicOverlay.getLocationOnScreen(location);
