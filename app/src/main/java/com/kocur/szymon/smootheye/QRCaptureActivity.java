@@ -254,16 +254,16 @@ public final class QRCaptureActivity extends Fragment {
 
     /**
      * Simple method responsible for executing checkScreenSector in nested loops.
-     *
-     *  Inner loop
-     *  <------->
-     *   _______
-     *  |-------|
-     *  |-------|      <--- This is the screen.
-     *  |-------|
-     *  |-------|
-     *  |-------|
-     *  |-------|
+     * <br><br>
+     *  Inner loop <br>
+     *  <-------> <br>
+     *    ______ <br>
+     *  |-------|<br>
+     *  |-------|      <--- This is the screen. <br>
+     *  |-------|<br>
+     *  |-------|<br>
+     *  |-------|<br>
+     *  |-------|<br>
      */
     private void scanLoop() {
         for (int i = 0; i < HEIGHT /100; i++) {
