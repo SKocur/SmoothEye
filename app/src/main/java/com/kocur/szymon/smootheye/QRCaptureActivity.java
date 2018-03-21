@@ -33,6 +33,19 @@ import java.util.HashMap;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * <h1>QRCaptureActivity</h1>
+ *
+ * This class is core of everything in this universe.
+ * It contains method responsible for scanning view (in separated thread) from Camera.
+ * Opens second activity {@link ChoiceActivity} when scanner method finds QR-Code on the screen
+ * with data saved in it with a given pattern.
+ *
+ * Pattern:
+ * SEMENU-1-Place1-2-Place2-...-n-somePlace
+ *
+ * @author Szymon Kocur
+ */
 public final class QRCaptureActivity extends Fragment {
 
     private int WIDTH = 0;
@@ -205,6 +218,13 @@ public final class QRCaptureActivity extends Fragment {
         return rootView;
     }
 
+    /**
+     * It waits until user choose desired place in {@link ChoiceActivity}.
+     *
+     * @param requestCode ID of result.
+     * @param resultCode Integer to check if result is good.
+     * @param data Data fetched from {@link ChoiceActivity}
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -214,6 +234,12 @@ public final class QRCaptureActivity extends Fragment {
         }
     }
 
+    /**
+     * This method is executed after it receives data about chosen place/target from {@link ChoiceActivity}.
+     * In {@link ChoiceActivity} user choose place by clicking on a button.
+     *
+     * @param data This is data fetched from {@link ChoiceActivity}.
+     */
     private void scan(Intent data) {
         textToVoice.speak("You have chosen " + availableChoices.get(Integer.parseInt(data.getStringExtra("data"))));
         choice = Integer.parseInt(data.getStringExtra("data"));
@@ -226,8 +252,21 @@ public final class QRCaptureActivity extends Fragment {
         }, 100);
     }
 
+    /**
+     * Simple method responsible for executing checkScreenSector in nested loops.
+     *
+     *  Inner loop
+     *  <------->
+     *   _______
+     *  |-------|
+     *  |-------|      <--- This is the screen.
+     *  |-------|
+     *  |-------|
+     *  |-------|
+     *  |-------|
+     */
     private void scanLoop() {
-        for (int i = 0; i < HEIGHT /100; i++){
+        for (int i = 0; i < HEIGHT /100; i++) {
             for (int j = 0; j < WIDTH /100; j++) {
                 checkScreenSector(i*150, j*150);
             }
