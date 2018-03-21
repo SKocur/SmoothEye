@@ -3,13 +3,16 @@ package com.kocur.szymon.smootheye;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+/**
+ * <h1>HelloActivity</h1>
+ *
+ * This activity is displayed once, on first start up of application.
+ */
 public class HelloActivity extends AppCompatActivity {
 
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -37,6 +40,14 @@ public class HelloActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * If permission was granted this method executes {@link SwipeCore}.
+     * In other case it do nothing.
+     *
+     * @param requestCode ID of permission code.
+     * @param permissions Array of permissions.
+     * @param grantResults Integer to check if permission was granted.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == 2 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -62,7 +73,7 @@ public class HelloActivity extends AppCompatActivity {
 
     private boolean checkCameraPermission() {
         String permission = "android.permission.CAMERA";
-        int res =getApplicationContext().checkCallingOrSelfPermission(permission);
+        int res = getApplicationContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
     }
 }
