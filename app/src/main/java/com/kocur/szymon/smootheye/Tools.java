@@ -5,11 +5,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 /**
- * Created by Szymon Kocur on 2018-03-03.
+ * <h1>Tools</h1>
+ *
+ * This class contains simple methods which can be accessed in a static way.
  */
-
 public class Tools {
 
+    /**
+     * Checks if application has access to the internet.
+     *
+     * @param context Context of activity which calls this method.
+     * @return true if network is available.
+     */
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
