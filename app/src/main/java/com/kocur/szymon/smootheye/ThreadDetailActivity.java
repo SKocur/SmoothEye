@@ -116,6 +116,7 @@ public class ThreadDetailActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
+                // TODO: Below throws exception when there are no comments under the thread
                 CommentPOJO[] commentPOJOs = nGson.fromJson(runUrl("https://talkpost.pl/api/?action=get&mode=comments&threadid=" + getIntent().getExtras().getString("threadID")), CommentPOJO[].class);
 
                 for (CommentPOJO item : commentPOJOs) {
@@ -129,6 +130,8 @@ public class ThreadDetailActivity extends AppCompatActivity {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
         }

@@ -315,7 +315,7 @@ public final class QRCaptureActivity extends Fragment {
         Barcode best;
         for (BarcodeGraphic graphic : mGraphicOverlay.getGraphics()) {
             Barcode barcode = graphic.getBarcode();
-            if(barcode.getBoundingBox() != null) {
+            if (barcode.getBoundingBox() != null) {
                 if (barcode.getBoundingBox().contains((int) x, (int) y)) {
                     // Exact hit, no need to keep looking.
                     best = barcode;
@@ -330,7 +330,7 @@ public final class QRCaptureActivity extends Fragment {
 
                         final String data[] = best.rawValue.split("[-]");
                         for (int i = 1; i < data.length; i++) {
-                            Log.e(">>>>>>>>>>>>>>>>>>>>", data[i]);
+
                             if (i % CHOICE_EVEN_SEPARATOR != 0) {
                                 availableChoices.put(Integer.parseInt(data[i]), data[i + 1]);
                             }

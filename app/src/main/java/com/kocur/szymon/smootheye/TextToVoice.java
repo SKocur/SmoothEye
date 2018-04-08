@@ -26,7 +26,7 @@ public class TextToVoice {
         });
     }
 
-    TextToVoice(Context context, final String initText){
+    TextToVoice(Context context, final String initText) {
         tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -38,17 +38,20 @@ public class TextToVoice {
         });
     }
 
-    public void setSpeechRate(float rate){
+    public void setSpeechRate(float rate) {
         this.speechRate = rate;
         tts.setSpeechRate(speechRate);
     }
 
-    public void speak(String text){
-        if(!tts.isSpeaking()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+    public void speak(String text) {
+        if (!tts.isSpeaking()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
-            else
+                tts.playSilence(2000, TextToSpeech.QUEUE_ADD, null);
+            } else {
                 tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+                tts.playSilence(2000, TextToSpeech.QUEUE_ADD, null);
+            }
         }
     }
 
