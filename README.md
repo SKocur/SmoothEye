@@ -16,3 +16,7 @@ First launch                                         | User guide dialog
 Permission screen                                    | QR-Code Detecion
 :---------------------------------------------------:|:-------------------------------------------------:
 <img src="images/hello_screen.png" width=60%>        |<img src="images/scanning_screen.png" width=60%>
+
+TalkPost threads view                                |
+:---------------------------------------------------:|
+<img src="images/threads_view_1.gif" width=100%>     |
