@@ -73,15 +73,12 @@ public class ThreadsActivity extends Fragment {
         final PullRefreshLayout layout = (PullRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         layout.setRefreshStyle(PullRefreshLayout.STYLE_WATER_DROP);
 
-        layout.setOnRefreshListener(new PullRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (Tools.isNetworkAvailable(getActivity().getApplicationContext())) {
-                    list.removeAllViews();
-                    DownloadContent downloadContent = new DownloadContent();
-                    downloadContent.start();
-                    layout.setRefreshing(false);
-                }
+        layout.setOnRefreshListener(() -> {
+            if (Tools.isNetworkAvailable(getActivity().getApplicationContext())) {
+                list.removeAllViews();
+                DownloadContent downloadContent = new DownloadContent();
+                downloadContent.start();
+                layout.setRefreshing(false);
             }
         });
 
@@ -171,24 +168,21 @@ public class ThreadsActivity extends Fragment {
                     threadActiveDate.setText(threadPOJO.threadActiveDate);
                     threadCreatedBy.setText(threadPOJO.threadCreatedBy);
 
-                    cardView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.talkpost.pl/thread-" + threadPOJO.threadID + ".html")));
-                            Intent intent = new Intent(getActivity(), ThreadDetailActivity.class);
-                            intent.putExtra("threadName", threadPOJO.threadName);
-                            intent.putExtra("threadCreatedDate", threadPOJO.threadCreatedDate);
-                            intent.putExtra("threadCreatedBy", threadPOJO.threadCreatedBy);
-                            intent.putExtra("threadID", threadPOJO.threadID);
+                    cardView.setOnClickListener(view -> {
+                        //getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.talkpost.pl/thread-" + threadPOJO.threadID + ".html")));
+                        Intent intent = new Intent(getActivity(), ThreadDetailActivity.class);
+                        intent.putExtra("threadName", threadPOJO.threadName);
+                        intent.putExtra("threadCreatedDate", threadPOJO.threadCreatedDate);
+                        intent.putExtra("threadCreatedBy", threadPOJO.threadCreatedBy);
+                        intent.putExtra("threadID", threadPOJO.threadID);
 
-                            // To create astonishing transitions of views between activities.
-                            Pair<View, String> p1 = Pair.create(layout.findViewById(R.id.thread_name), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_name)));
-                            Pair<View, String> p2 = Pair.create(layout.findViewById(R.id.thread_author), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_author)));
-                            Pair<View, String> p3 = Pair.create(layout.findViewById(R.id.thread_created_date), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_created_date)));
+                        // To create astonishing transitions of views between activities.
+                        Pair<View, String> p1 = Pair.create(layout.findViewById(R.id.thread_name), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_name)));
+                        Pair<View, String> p2 = Pair.create(layout.findViewById(R.id.thread_author), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_author)));
+                        Pair<View, String> p3 = Pair.create(layout.findViewById(R.id.thread_created_date), ViewCompat.getTransitionName(getView().findViewById(R.id.thread_created_date)));
 
-                            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), p1, p2, p3);
-                            getActivity().startActivity(intent, options.toBundle());
-                        }
+                        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), p1, p2, p3);
+                        getActivity().startActivity(intent, options.toBundle());
                     });
 
                     list.addView(layout);

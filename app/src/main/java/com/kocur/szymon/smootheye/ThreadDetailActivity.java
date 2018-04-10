@@ -158,8 +158,9 @@ public class ThreadDetailActivity extends AppCompatActivity {
                 try {
                     String commentContent[] = commentPOJO.commentText.split("<br />");
                     String comment = "";
-                    for(String text : commentContent)
+                    for (String text : commentContent) {
                         comment += text;
+                    }
 
                     commentText.setText(comment);
                     commentCreatedDate.setText(commentPOJO.commentDate.replace("|", "\n"));

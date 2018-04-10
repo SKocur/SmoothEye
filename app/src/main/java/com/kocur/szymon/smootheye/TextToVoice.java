@@ -16,24 +16,18 @@ public class TextToVoice {
     private float speechRate;
 
     TextToVoice(Context context){
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = tts.setLanguage(Locale.US);
-                }
+        tts = new TextToSpeech(context, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                int result = tts.setLanguage(Locale.US);
             }
         });
     }
 
     TextToVoice(Context context, final String initText) {
-        tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    int result = tts.setLanguage(Locale.US);
-                    speak(initText);
-                }
+        tts = new TextToSpeech(context, status -> {
+            if (status == TextToSpeech.SUCCESS) {
+                int result = tts.setLanguage(Locale.US);
+                speak(initText);
             }
         });
     }

@@ -155,44 +155,35 @@ public final class QRCaptureActivity extends Fragment {
             }
         });
 
-        rootView.findViewById(R.id.image_icon_settings).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_settings));
-                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
-            }
+        rootView.findViewById(R.id.image_icon_settings).setOnClickListener(view -> {
+            YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_settings));
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
         });
 
-        rootView.findViewById(R.id.image_icon_smootheye).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                YoYo.with(Techniques.RotateIn).duration(400).playOn(rootView.findViewById(R.id.image_icon_smootheye));
-                Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
-            }
+        rootView.findViewById(R.id.image_icon_smootheye).setOnClickListener(view -> {
+            YoYo.with(Techniques.RotateIn).duration(400).playOn(rootView.findViewById(R.id.image_icon_smootheye));
+            Toast.makeText(getActivity().getApplicationContext(), getString(R.string.new_feature_in_future), Toast.LENGTH_SHORT).show();
         });
 
-        rootView.findViewById(R.id.image_icon_flashlight).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), SwipeCore.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        rootView.findViewById(R.id.image_icon_flashlight).setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), SwipeCore.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-                if (!useFlash) {
-                    useFlash = true;
-                    intent.putExtra("useFlash", useFlash);
-                } else {
-                    useFlash = false;
-                    intent.putExtra("useFlash", useFlash);
-                }
-
-                intent.putExtra("data", choice);
-                intent.putExtra("availableChoices", availableChoices);
-                intent.putExtra("isOnSemenu", isOnSEMENU);
-                intent.putExtra("fragmentID", 1);
-                startActivity(intent);
-
-                YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_flashlight));
+            if (!useFlash) {
+                useFlash = true;
+                intent.putExtra("useFlash", useFlash);
+            } else {
+                useFlash = false;
+                intent.putExtra("useFlash", useFlash);
             }
+
+            intent.putExtra("data", choice);
+            intent.putExtra("availableChoices", availableChoices);
+            intent.putExtra("isOnSemenu", isOnSEMENU);
+            intent.putExtra("fragmentID", 1);
+            startActivity(intent);
+
+            YoYo.with(Techniques.StandUp).duration(400).playOn(rootView.findViewById(R.id.image_icon_flashlight));
         });
 
         choice = getActivity().getIntent().getIntExtra("data", 0);

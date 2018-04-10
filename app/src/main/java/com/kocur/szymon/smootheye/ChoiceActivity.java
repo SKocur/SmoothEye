@@ -77,22 +77,16 @@ public class ChoiceActivity extends AppCompatActivity {
     }
 
     public void enableOptionOnButton(final String option) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                buttonChoice.setText(option);
-                buttonChoice.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        isBackgroundThreadRunning = false;
-                        handler.removeCallbacksAndMessages(null);
-                        Intent intent = new Intent();
-                        intent.putExtra("data", availableOptions.get(option).toString());
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                });
-            }
+        runOnUiThread(() -> {
+            buttonChoice.setText(option);
+            buttonChoice.setOnClickListener(view -> {
+                isBackgroundThreadRunning = false;
+                handler.removeCallbacksAndMessages(null);
+                Intent intent = new Intent();
+                intent.putExtra("data", availableOptions.get(option).toString());
+                setResult(RESULT_OK, intent);
+                finish();
+            });
         });
     }
 }

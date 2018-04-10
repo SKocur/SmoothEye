@@ -24,12 +24,7 @@ public class HelloActivity extends AppCompatActivity {
         if (!checkCameraPermission()) {
             setContentView(R.layout.activity_hello);
 
-            findViewById(R.id.hello_button_letsgo).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    requestCameraPermission();
-                }
-            });
+            findViewById(R.id.hello_button_letsgo).setOnClickListener(view -> requestCameraPermission());
         } else {
             Intent intent = new Intent(this, SwipeCore.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
