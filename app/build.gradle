@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion '26.0.2'
+
     defaultConfig {
         applicationId "com.kocur.szymon.smootheye"
         minSdkVersion 19
@@ -18,12 +19,14 @@ android {
             }
         }
     }
+
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
